@@ -3,8 +3,8 @@
 const { default: mongoose } = require("mongoose");
 const { countConnect } = require("../helpers/check.connect");
 
-const connectString = `mongodb://localhost:27017/ecommerce`;
-
+const { db: config } = require("../configs/config.mongodb");
+const connectString = `mongodb://${config.host}:${config.port}/${config.name}`;
 // singleton pattern
 class Database {
   constructor() {
