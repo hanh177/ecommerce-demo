@@ -7,10 +7,10 @@ const {
 } = require("../core/error.response");
 const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
 const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
+const crypto = require("crypto");
 class AccessService {
   static signUp = async ({ name, email, password }) => {
     const holderShop = await shopModel.findOne({ email }).lean();
@@ -31,37 +31,42 @@ class AccessService {
     }
 
     // generate public and private key
-    const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: "pkcs1",
-        format: "pem",
-      },
-      privateKeyEncoding: {
-        type: "pkcs1",
-        format: "pem",
-      },
-    });
+
+    // const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
+    //   modulusLength: 4096,
+    //   publicKeyEncoding: {
+    //     type: "pkcs1",
+    //     format: "pem",
+    //   },
+    //   privateKeyEncoding: {
+    //     type: "pkcs1",
+    //     format: "pem",
+    //   },
+    // });
+
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
 
     // save public key to key token model
-    const publicKeyString = await KeyTokenService.createKeyToken({
+    const keyStore = await KeyTokenService.createKeyToken({
       userId: newShop._id,
       publicKey,
+      privateKey,
     });
 
-    if (!publicKeyString) {
+    if (!keyStore) {
       throw new BadRequestError("Error: Can't create key");
     }
 
     // create token pair
     const tokens = await createTokenPair(
       { userId: newShop._id, email: newShop.email },
-      publicKeyString,
+      publicKey,
       privateKey
     );
 
     return {
-      shop: getInfoData({ object: newShop, fields: ["_id", "name", "email"] }),
+      shop: getInfoData(newShop, ["_id", "name", "email"]),
       tokens,
     };
   };
