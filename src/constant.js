@@ -7,7 +7,8 @@ const RoleShop = {
 
 const HEADER = {
   API_KEY: "x-api-key",
-  AUTHORIZATION: "Authorization",
+  AUTHORIZATION: "authorization",
+  CLIENT_ID: "client-id",
 };
 
 module.exports = {

@@ -20,3 +20,11 @@ x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d1
     "email": "shop3@gmail.com",
     "password": "abc123"
 }
+
+### logout
+POST {{url_dev}}shop/logout
+Content-Type: application/json
+x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d12c78a01e7e8e1c92752e8c7f76eb2244427734426b976f0987f1610803a
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzZlNzMyMjNkZmJkN2ZiNDkyZDUzMTQiLCJlbWFpbCI6InNob3AzQGdtYWlsLmNvbSIsImlhdCI6MTczNTU0ODg3OCwiZXhwIjoxNzM1NzIxNjc4fQ.ubMfvBpq21UIlYqnihXgK772fAWYP_ESAQghYLy1D-g
+client-id: 676e73223dfbd7fb492d5314
+

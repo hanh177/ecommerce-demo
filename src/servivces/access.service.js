@@ -15,6 +15,9 @@ const { getInfoData } = require("../utils");
 const { findShopByEmail } = require("./shop.service");
 
 class AccessService {
+  static logout = async (keyStore) => {
+    return await KeyTokenService.removeKeyTokenById(keyStore._id);
+  };
   static login = async ({ email, password, refreshToken = null }) => {
     const foundShop = await findShopByEmail(email);
 
