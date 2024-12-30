@@ -4,12 +4,7 @@ const keytokenModel = require("../models/keytoken.model");
 const { toMongoObjectId } = require("../utils");
 
 class KeyTokenService {
-  static createKeyToken = async ({
-    userId,
-    publicKey,
-    privateKey,
-    refreshToken,
-  }) => {
+  static create = async ({ userId, publicKey, privateKey, refreshToken }) => {
     // const keyToken = await keytokenModel.create({
     //   user: userId,
     //   publicKey,
@@ -35,14 +30,27 @@ class KeyTokenService {
     return tokens ? tokens.publicKey : null;
   };
 
-  static findKeyTokenByUserId = async (userId) => {
+  static findByUserId = async (userId) => {
     return await keytokenModel
       .findOne({ user: toMongoObjectId(userId) })
       .lean();
   };
 
-  static removeKeyTokenById = async (id) =>
-    await keytokenModel.deleteOne({ _id: id });
+  static removeById = async (id) =>
+    await keytokenModel.findByIdAndDelete({ _id: id });
+
+  static findnByRefreshTokenUsed = async (refreshToken) =>
+    await keytokenModel
+      .findOne({
+        refreshTokensUsed: refreshToken,
+      })
+      .lean();
+
+  static removeByUserId = async (userId) =>
+    await keytokenModel.findOneAndDelete({ user: userId });
+
+  static findnByRefreshToken = async (refreshToken) =>
+    await keytokenModel.findOne({ refreshToken });
 }
 
 module.exports = KeyTokenService;

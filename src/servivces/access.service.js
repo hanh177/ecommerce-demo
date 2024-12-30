@@ -6,17 +6,70 @@ const {
   ConflictRequestError,
   NotFoundError,
   UnauthorizedError,
+  ForbiddenError,
 } = require("../core/error.response");
 const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const KeyTokenService = require("./keyToken.service");
-const { createTokenPair, createKeyPair } = require("../auth/authUtils");
+const {
+  createTokenPair,
+  createKeyPair,
+  verifyJWT,
+} = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
 const { findShopByEmail } = require("./shop.service");
 
 class AccessService {
+  static handleRefreshToken = async (refreshToken) => {
+    const foundTokenUsed = await KeyTokenService.findnByRefreshTokenUsed(
+      refreshToken
+    );
+
+    // if refreshToken was used before => maybe hacker => remove all key store of user
+    if (foundTokenUsed) {
+      const { userId, _ } = verifyJWT(refreshToken, foundTokenUsed.privateKey);
+
+      await KeyTokenService.removeByUserId(userId);
+      throw new ForbiddenError("Something went wrong! Please reloging");
+    }
+
+    // find and verify current key by refresh token
+    const holderToken = await KeyTokenService.findnByRefreshToken(refreshToken);
+    if (!holderToken) throw new UnauthorizedError("Key store not found");
+
+    const { userId, email } = await verifyJWT(
+      refreshToken,
+      holderToken.privateKey
+    );
+
+    // find and verify user
+    const foundShop = await findShopByEmail(email);
+    if (!foundShop) throw new UnauthorizedError("Shop has not registered");
+
+    // create new token pair
+    const tokens = await createTokenPair(
+      { userId, email },
+      holderToken.publicKey,
+      holderToken.privateKey
+    );
+
+    // update tokens
+    await holderToken.updateOne({
+      $set: {
+        refreshToken: tokens.refreshToken,
+      },
+      $addToSet: {
+        refreshTokensUsed: refreshToken,
+      },
+    });
+
+    return {
+      user: { userId, email },
+      tokens,
+    };
+  };
   static logout = async (keyStore) => {
-    return await KeyTokenService.removeKeyTokenById(keyStore._id);
+    return await KeyTokenService.removeById(keyStore._id);
   };
   static login = async ({ email, password, refreshToken = null }) => {
     const foundShop = await findShopByEmail(email);
@@ -39,7 +92,7 @@ class AccessService {
       privateKey
     );
 
-    await KeyTokenService.createKeyToken({
+    await KeyTokenService.create({
       userId,
       publicKey,
       privateKey,
@@ -87,7 +140,7 @@ class AccessService {
     const { privateKey, publicKey } = createKeyPair();
 
     // save public key to key token model
-    const keyStore = await KeyTokenService.createKeyToken({
+    const keyStore = await KeyTokenService.create({
       userId: newShop._id,
       publicKey,
       privateKey,

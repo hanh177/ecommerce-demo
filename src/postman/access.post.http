@@ -6,10 +6,12 @@ Content-Type: application/json
 x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d12c78a01e7e8e1c92752e8c7f76eb2244427734426b976f0987f1610803a
 
 {
-    "name": "Test shop3",
-    "email": "shop3@gmail.com",
+    "name": "Test shop1",
+    "email": "shop1@gmail.com",
     "password": "abc123"
 }
+
+
 
 ### login
 POST {{url_dev}}shop/login
@@ -17,14 +19,26 @@ Content-Type: application/json
 x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d12c78a01e7e8e1c92752e8c7f76eb2244427734426b976f0987f1610803a
 
 {
-    "email": "shop3@gmail.com",
+    "email": "shop1@gmail.com",
     "password": "abc123"
 }
+
 
 ### logout
 POST {{url_dev}}shop/logout
 Content-Type: application/json
 x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d12c78a01e7e8e1c92752e8c7f76eb2244427734426b976f0987f1610803a
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzZlNzMyMjNkZmJkN2ZiNDkyZDUzMTQiLCJlbWFpbCI6InNob3AzQGdtYWlsLmNvbSIsImlhdCI6MTczNTU0ODg3OCwiZXhwIjoxNzM1NzIxNjc4fQ.ubMfvBpq21UIlYqnihXgK772fAWYP_ESAQghYLy1D-g
-client-id: 676e73223dfbd7fb492d5314
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzcyNmQ5Zjk5YzFlMTExNGE0MDBiMGIiLCJlbWFpbCI6InNob3AxQGdtYWlsLmNvbSIsImlhdCI6MTczNTU1MzM4OCwiZXhwIjoxNzM1NzI2MTg4fQ.W258FIP0AOFwBg7X1KjD6lDDYao9uv3hx78VD_6YMTs
+client-id: 67726d9f99c1e1114a400b0b
 
+
+### refesh token
+POST {{url_dev}}shop/refresh-token
+Content-Type: application/json
+x-api-key: 4de98ec2ceb93a69ed72126ab8b6e5938ca3311cab5f2d0530194a4ae6c04d97ca2d12c78a01e7e8e1c92752e8c7f76eb2244427734426b976f0987f1610803a
+authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzcyNmQ5Zjk5YzFlMTExNGE0MDBiMGIiLCJlbWFpbCI6InNob3AxQGdtYWlsLmNvbSIsImlhdCI6MTczNTU1MzUzMiwiZXhwIjoxNzM1NzI2MzMyfQ.d_PC78e3qMzM7kZvU4luJYT8AcILxIvf6EOav-G3Td0
+client-id: 67726d9f99c1e1114a400b0b
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzcyNmQ5Zjk5YzFlMTExNGE0MDBiMGIiLCJlbWFpbCI6InNob3AxQGdtYWlsLmNvbSIsImlhdCI6MTczNTU1MzUzMiwiZXhwIjoxNzM2MTU4MzMyfQ.1ECvnB4Haor4gUqcm1RNBOYjMy3rIXJ7wtArXaHuje8"
+}

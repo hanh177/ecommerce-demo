@@ -54,7 +54,7 @@ const authentication = async (req, res, next) => {
   const userId = req.headers[HEADER.CLIENT_ID];
   if (!userId) throw new UnauthorizedError("Invalid request");
 
-  const keyStore = await KeyTokenService.findKeyTokenByUserId(userId);
+  const keyStore = await KeyTokenService.findByUserId(userId);
   if (!keyStore) throw new NotFoundError("Key store not found");
 
   const accessToken = req.headers[HEADER.AUTHORIZATION];
@@ -62,6 +62,8 @@ const authentication = async (req, res, next) => {
 
   try {
     const decodeData = jwt.decode(accessToken, keyStore.publicKey);
+
+    if (!decodeData) throw new UnauthorizedError("Invalid request");
     if (userId !== decodeData.userId)
       throw new UnauthorizedError("Invalid user id");
 
