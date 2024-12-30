@@ -9,6 +9,7 @@ const {
 const { findOneApiKey } = require("../servivces/apikey.service");
 const jwt = require("jsonwebtoken");
 const KeyTokenService = require("../servivces/keyToken.service");
+const { verifyJWT } = require("./authUtils");
 
 const checkApiKey = async (req, res, next) => {
   const key = req.headers[HEADER.API_KEY]?.toString();
@@ -57,13 +58,29 @@ const authentication = async (req, res, next) => {
   const keyStore = await KeyTokenService.findByUserId(userId);
   if (!keyStore) throw new NotFoundError("Key store not found");
 
+  const refreshToken = req.headers[HEADER.REFRESH_TOKEN];
+  if (refreshToken) {
+    try {
+      const decodeData = await verifyJWT(refreshToken, keyStore.privateKey);
+
+      if (userId !== decodeData.userId)
+        throw new UnauthorizedError("Invalid user id");
+
+      req.user = decodeData;
+      req.refreshToken = refreshToken;
+      req.keyStore = keyStore;
+      return next();
+    } catch (e) {
+      throw e;
+    }
+  }
+
   const accessToken = req.headers[HEADER.AUTHORIZATION];
   if (!accessToken) throw new UnauthorizedError("Invalid request");
 
   try {
-    const decodeData = jwt.decode(accessToken, keyStore.publicKey);
+    const decodeData = await verifyJWT(accessToken, keyStore.publicKey);
 
-    if (!decodeData) throw new UnauthorizedError("Invalid request");
     if (userId !== decodeData.userId)
       throw new UnauthorizedError("Invalid user id");
 

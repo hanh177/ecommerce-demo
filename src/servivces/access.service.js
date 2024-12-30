@@ -20,41 +20,29 @@ const { getInfoData } = require("../utils");
 const { findShopByEmail } = require("./shop.service");
 
 class AccessService {
-  static handleRefreshToken = async (refreshToken) => {
-    const foundTokenUsed = await KeyTokenService.findnByRefreshTokenUsed(
-      refreshToken
-    );
+  static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
+    const { userId, email } = user;
 
     // if refreshToken was used before => maybe hacker => remove all key store of user
-    if (foundTokenUsed) {
-      const { userId, _ } = verifyJWT(refreshToken, foundTokenUsed.privateKey);
-
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
       await KeyTokenService.removeByUserId(userId);
-      throw new ForbiddenError("Something went wrong! Please reloging");
+      throw new ForbiddenError("Something went wrong! Please relogin");
     }
 
-    // find and verify current key by refresh token
-    const holderToken = await KeyTokenService.findnByRefreshToken(refreshToken);
-    if (!holderToken) throw new UnauthorizedError("Key store not found");
-
-    const { userId, email } = await verifyJWT(
-      refreshToken,
-      holderToken.privateKey
-    );
-
-    // find and verify user
-    const foundShop = await findShopByEmail(email);
-    if (!foundShop) throw new UnauthorizedError("Shop has not registered");
+    // check if valid refresh token
+    if (keyStore.refreshToken !== refreshToken) {
+      throw new UnauthorizedError("Shop has not registered");
+    }
 
     // create new token pair
     const tokens = await createTokenPair(
       { userId, email },
-      holderToken.publicKey,
-      holderToken.privateKey
+      keyStore.publicKey,
+      keyStore.privateKey
     );
 
     // update tokens
-    await holderToken.updateOne({
+    await keyStore.updateOne({
       $set: {
         refreshToken: tokens.refreshToken,
       },
