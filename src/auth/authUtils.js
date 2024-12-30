@@ -1,6 +1,15 @@
 "use strict";
 
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
+const createKeyPair = () => {
+  const privateKey = crypto.randomBytes(64).toString("hex");
+  const publicKey = crypto.randomBytes(64).toString("hex");
+
+  return { privateKey, publicKey };
+};
+
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
     const accessToken = jwt.sign(payload, publicKey, {
@@ -26,4 +35,4 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
   }
 };
 
-module.exports = { createTokenPair };
+module.exports = { createKeyPair, createTokenPair };

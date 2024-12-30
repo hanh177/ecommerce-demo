@@ -1,12 +1,8 @@
 "use strict";
 
+const { HEADER } = require("../constant");
 const { ForbiddenError } = require("../core/error.response");
 const { findOneApiKey } = require("../servivces/apikey.service");
-
-const HEADER = {
-  API_KEY: "x-api-key",
-  AUTHORIZATION: "Authorization",
-};
 
 const checkApiKey = async (req, res, next) => {
   const key = req.headers[HEADER.API_KEY]?.toString();
