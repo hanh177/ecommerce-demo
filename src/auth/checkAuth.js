@@ -84,6 +84,7 @@ const authentication = async (req, res, next) => {
     if (userId !== decodeData.userId)
       throw new UnauthorizedError("Invalid user id");
 
+    req.user = decodeData;
     req.keyStore = keyStore;
   } catch (e) {
     throw e;

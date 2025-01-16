@@ -8,13 +8,12 @@ authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzcyNmQ5Zjk5Y
 client-id: 67726d9f99c1e1114a400b0b
 
 {
-    "product_name" :"product_name",
+    "product_name" :"product 2",
     "product_thumb" :"product_thumb",
     "product_description" :"product_description",
     "product_price" :15,
     "product_quantity" :30,
     "product_type" :"clothing",
-    "product_shop" :"67726d9f99c1e1114a400b0b",
     "product_attributes": {
         "brand": "Brand A",
         "size": "L",
