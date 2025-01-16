@@ -12,7 +12,14 @@ const HEADER = {
   REFRESH_TOKEN: "refresh-token",
 };
 
+const ProductTypes = {
+  ELECTRONICS: "electronics",
+  CLOTHING: "clothing",
+  FURNITURE: "furniture",
+};
+
 module.exports = {
   RoleShop,
   HEADER,
+  ProductTypes,
 };
